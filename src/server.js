@@ -10,10 +10,22 @@ const PORT = process.env.PORT || 5000;
 
 connectDB(); // Connect to MongoDB
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://fieldmate-frontend.vercel.app"
+];
+
 app.use(cors({
-  origin: "https://fieldmate-frontend.vercel.app",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
 
 app.use(express.json()); // To parse JSON request bodies
 
