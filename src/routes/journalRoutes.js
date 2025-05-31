@@ -11,13 +11,15 @@ const {
   getJournalById
 } = require('../controller/journalController');
 
-router.get('/', getAllJournals);
-router.post('/', createJournal);
-router.get('/today', getTodayJournal);
-router.get('/company', getJournalsByCompany);
-router.get('/user', getUserByEmail); 
-router.patch('/journal/:id/viewed', markJournalAsViewed);
-router.patch('/journal/:id/remove', markJournalAsRemoved);
-router.get('/journal/:id', getJournalById); 
+const authenticate = require("../middleware/authMiddleware");
+
+router.get('/', authenticate, getAllJournals);
+router.post('/', authenticate, createJournal); // If public, remove `authenticate`
+router.get('/today', authenticate, getTodayJournal);
+router.get('/company', authenticate, getJournalsByCompany);
+router.get('/user', authenticate, getUserByEmail);
+router.patch('/journal/:id/viewed', authenticate, markJournalAsViewed);
+router.patch('/journal/:id/remove', authenticate, markJournalAsRemoved);
+router.get('/journal/:id', authenticate, getJournalById);
 
 module.exports = router;

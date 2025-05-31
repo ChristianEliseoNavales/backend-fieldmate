@@ -11,13 +11,15 @@ const {
     getAllAttendance
 } = require('../controller/attendanceController');
 
-router.get('/today', getTodayAttendance);
-router.post('/timein', timeIn);
-router.put('/timeout/:id', timeOut);
-router.put('/submit/:id', submitAttendance);
-router.get('/company', getCompanyAttendances);
-router.put('/approve/:id', approveAttendance);
-router.put('/deny/:id', denyAttendance);
-router.get('/', getAllAttendance);
+const authenticate = require("../middleware/authMiddleware");
+
+router.get('/today', authenticate, getTodayAttendance);
+router.post('/timein', authenticate, timeIn);
+router.put('/timeout/:id', authenticate, timeOut);
+router.put('/submit/:id', authenticate, submitAttendance);
+router.get('/company', authenticate, getCompanyAttendances);
+router.put('/approve/:id', authenticate, approveAttendance);
+router.put('/deny/:id', authenticate, denyAttendance);
+router.get('/', authenticate, getAllAttendance);
 
 module.exports = router;

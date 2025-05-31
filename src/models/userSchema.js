@@ -2,13 +2,12 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
   uid: { type: String, required: true, unique: true }, 
-  firstName: String,
-  lastName: String,
+  firstName: { type: String, required: true, unique: true },
+  lastName: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  role: { type: String, enum: ["Student", "Coordinator"] },
-  supervisorNumber: String,
-  company: String,
-  arrangement: { type: String, enum: ["On-site", "Remote", "Hybrid"] },
+  role: { type: String, required: true, unique: true },
+  company: { type: String, required: true, unique: true },
+  arrangement: { type: String, required: true, unique: true },
 }, { timestamps: true });
 
 module.exports = mongoose.models.User || mongoose.model('User', userSchema);
