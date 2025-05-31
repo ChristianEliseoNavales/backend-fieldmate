@@ -10,9 +10,21 @@ const PORT = process.env.PORT || 5000;
 
 connectDB(); // Connect to MongoDB
 
+const allowedOrigins = [
+  "http://localhost:3000", // your local frontend URL
+  "https://your-frontend.onrender.com" // production frontend URL
+];
+
 // Middleware
 app.use(cors({
-  origin: "https://fieldmate-backend.onrender.com" 
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like Postman) or if origin is in allowedOrigins
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  }
 }));
 
 app.use(express.json()); // To parse JSON request bodies
