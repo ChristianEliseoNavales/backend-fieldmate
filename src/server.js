@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 5000;
 connectDB(); // Connect to MongoDB
 
 const allowedOrigins = [
-  "http://localhost:3000", // your local frontend URL
+  `http://localhost:${PORT}`, // your local frontend URL
   "https://your-frontend.onrender.com" // production frontend URL
 ];
 
