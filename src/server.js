@@ -11,7 +11,10 @@ const PORT = process.env.PORT || 5000;
 connectDB(); // Connect to MongoDB
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "https://fieldmate-backend.onrender.com" 
+}));
+
 app.use(express.json()); // To parse JSON request bodies
 
 // Routes
