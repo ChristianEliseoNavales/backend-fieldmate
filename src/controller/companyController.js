@@ -54,3 +54,14 @@ exports.deleteCompany = async (req, res) => {
     res.status(500).json({ message: "Failed to delete company." });
   }
 };
+
+// DELETE all companies
+exports.deleteAllCompanies = async (req, res) => {
+  try {
+    await Company.deleteMany({});
+    res.json({ message: "All companies deleted." });
+  } catch (err) {
+    console.error("Delete all error:", err);
+    res.status(500).json({ message: "Failed to delete all companies." });
+  }
+};
