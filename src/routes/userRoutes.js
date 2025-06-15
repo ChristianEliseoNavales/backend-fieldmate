@@ -7,7 +7,9 @@ const {
   getAllUsers,
 } = require("../controller/userController");
 
-router.post("/register", registerUser);
+const { validate, registerSchema } = require("../middleware/joiValidator");
+
+router.post("/register", validate(registerSchema), registerUser);
 router.post("/checkUserExists", checkUserExists);
 router.get("/users", getAllUsers); // 🔐 protected
 router.get("/user", getUserByEmail); // 🔐 protected
