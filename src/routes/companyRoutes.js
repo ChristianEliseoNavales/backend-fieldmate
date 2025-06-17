@@ -6,11 +6,15 @@ const {
   updateCompany,
   deleteCompany,
   deleteAllCompanies,
+  checkCompanyReferences,
+  getCompaniesWithReferences,
 } = require("../controller/companyController");
 
 const authenticate = require("../middleware/authMiddleware");
 
 router.get("/companies", getAllCompanies);
+router.get("/companies/with-references", getCompaniesWithReferences);
+router.get("/companies/:companyName/references", checkCompanyReferences);
 router.post("/companies", authenticate, addCompany);
 router.patch("/companies/:id", authenticate, updateCompany);
 router.delete("/companies/deleteAll",authenticate, deleteAllCompanies);
