@@ -2,8 +2,9 @@ const Attendance = require('../models/attendanceSchema');
 const User = require('../models/userSchema');
 
 const getTodayAttendance = async (req, res) => {
-  const { email } = req.query;
-  const today = new Date().toLocaleDateString();
+  const { email, date } = req.query;
+  // Use frontend-provided date if available, otherwise use server date
+  const today = date || new Date().toLocaleDateString();
 
   try {
     const record = await Attendance.findOne({ email, date: today });
@@ -19,13 +20,14 @@ const getTodayAttendance = async (req, res) => {
 // POST /api/attendance/timein
 const timeIn = async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, timeIn: frontendTimeIn, date: frontendDate } = req.body;
 
     if (!email) {
       return res.status(400).json({ message: 'Email is required' });
     }
 
-    const today = new Date().toLocaleDateString();
+    // Use frontend-provided date and time if available, otherwise fallback to server time
+    const today = frontendDate || new Date().toLocaleDateString();
     const existing = await Attendance.findOne({ email, date: today });
     if (existing) {
       return res.status(400).json({ message: 'Already timed in today' });
@@ -36,12 +38,18 @@ const timeIn = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const now = new Date();
-    const timeInFormatted = now.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
+    // Use frontend-provided time if available, otherwise generate server time
+    let timeInFormatted;
+    if (frontendTimeIn) {
+      timeInFormatted = frontendTimeIn;
+    } else {
+      const now = new Date();
+      timeInFormatted = now.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    }
 
     const attendance = new Attendance({
       firstName: user.firstName,
@@ -69,12 +77,20 @@ const timeIn = async (req, res) => {
 const timeOut = async (req, res) => {
   try {
     const { id } = req.params;
-    const now = new Date();
-    const timeOutFormatted = now.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
+    const { timeOut: frontendTimeOut } = req.body;
+
+    // Use frontend-provided time if available, otherwise generate server time
+    let timeOutFormatted;
+    if (frontendTimeOut) {
+      timeOutFormatted = frontendTimeOut;
+    } else {
+      const now = new Date();
+      timeOutFormatted = now.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    }
 
     const record = await Attendance.findById(id);
     if (!record) {
@@ -86,7 +102,7 @@ const timeOut = async (req, res) => {
     }
 
     // Parse both times as full Date objects
-    const todayStr = new Date().toLocaleDateString();
+    const todayStr = record.date || new Date().toLocaleDateString();
     const timeInDate = new Date(`${todayStr} ${record.timeIn}`);
     const timeOutDate = new Date(`${todayStr} ${timeOutFormatted}`);
 
